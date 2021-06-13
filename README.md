@@ -1,15 +1,31 @@
 # example-image-search
 
-## Install
+## Local
+
+### Install
 
 ```
 pip install -r requirements.txt
 ```
 
-## Run
+### Run
 
 ```
 uvicorn main:app --reload
+```
+
+## Docker
+
+### Install
+
+```
+docker-compose build
+```
+
+### Run
+
+```
+docker-compose up
 ```
 
 ## Check code conventions
