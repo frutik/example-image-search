@@ -4,6 +4,8 @@ import os
 from fastapi import FastAPI
 from fastapi.logger import logger
 
+from image_search.utils import ensure_required
+
 
 aws_access_key_id = os.getenv('AWS_KEY_ID')
 aws_secret_access_key = os.getenv('AWS_KEY_SECRET')
@@ -16,6 +18,10 @@ app = FastAPI()
 @app.on_event("startup")
 async def startup_event():
     logger.warning('Application startup')
+    ensure_required(
+        (aws_access_key_id, aws_secret_access_key),
+        aws_region,
+        aws_s3_bucket)
 
 
 @app.on_event("shutdown")
