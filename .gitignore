@@ -1,0 +1,8 @@
+.vscode/*
+.environment/
+.idea/
+.git/
+.gradle/
+.history
+tmp/*
+*.pyc
