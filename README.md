@@ -16,6 +16,14 @@ uvicorn main:app --reload
 
 ## Docker
 
+### Configure
+
+```
+cp .env.example .env
+```
+
+Edit .env providing correct values
+
 ### Install
 
 ```

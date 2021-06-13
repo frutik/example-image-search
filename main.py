@@ -1,8 +1,14 @@
 import uvicorn
+import os
 
 from fastapi import FastAPI
 from fastapi.logger import logger
 
+
+aws_access_key_id = os.getenv('AWS_KEY_ID')
+aws_secret_access_key = os.getenv('AWS_KEY_SECRET')
+aws_region = os.getenv('AWS_REGION')
+aws_s3_bucket = os.getenv('AWS_S3_BUCKET')
 
 app = FastAPI()
 
