@@ -7,6 +7,16 @@ from fastapi.logger import logger
 app = FastAPI()
 
 
+@app.on_event("startup")
+async def startup_event():
+    logger.warning('Application startup')
+
+
+@app.on_event("shutdown")
+def shutdown_event():
+    logger.warning('Application shutdown')
+
+
 @app.get("/status")
 def status():
     return {"Hello": "World"}
