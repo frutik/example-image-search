@@ -3,7 +3,7 @@ import os
 from aws.utils import download_from_s3
 
 
-TMP_PATH='/tmp/'
+TMP_PATH=os.getenv('TMP_DIR', '/tmp/')
 ANNOY_INDEX = 'test.ann'
 DOCUMENTS_INDEX = 'id2doc.csv'
 
