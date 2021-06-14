@@ -3,3 +3,4 @@ uvicorn[standard]
 pylint
 boto3
 invoke
+annoy
