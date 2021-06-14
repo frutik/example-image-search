@@ -1,7 +1,7 @@
 import os
 import uvicorn
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Form
 from fastapi.logger import logger
 
 from image_search import SearchIndex
@@ -36,6 +36,11 @@ def shutdown_event():
 @app.get("/status")
 def status():
     return {"Hello": "World"}
+
+
+@app.post("/search_by_url")
+async def search_by_url(url: str = Form(...),):
+    return {"url": url}
 
 
 if __name__ == "__main__":
