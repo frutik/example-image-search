@@ -4,6 +4,8 @@ import uvicorn
 from fastapi import FastAPI, Form
 from fastapi.logger import logger
 
+from images import image_by_url
+
 from image_search import SearchIndex
 from image_search.utils import ensure_required, ANNOY_INDEX_FULL_PATH
 
@@ -40,7 +42,11 @@ def status():
 
 @app.post("/search_by_url")
 async def search_by_url(url: str = Form(...),):
-    return {"url": url}
+    img = await image_by_url(url)
+    return {
+        'url': url,
+        'data': str(img)
+    }
 
 
 if __name__ == "__main__":

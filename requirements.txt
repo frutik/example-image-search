@@ -4,3 +4,6 @@ pylint
 boto3
 invoke
 annoy
+python-multipart
+httpx
+Pillow==8.1.2
