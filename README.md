@@ -41,6 +41,12 @@ docker-compose build
 docker-compose up
 ```
 
+### Sandbox/docs
+
+```
+open http://127.0.0.1:8000/docs#/
+```
+
 ## Check code conventions
 
 ```
