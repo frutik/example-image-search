@@ -1,6 +1,6 @@
 # example-image-search
 
-Lets try to build (imaginary) images search for the similar images. By writing a simple prototype step by step.
+Lets try to build (imaginary) images search for the similar images. By writing a simple prototype step by step (every commit matters).
 
 With blackjack, devops and CI.
 
