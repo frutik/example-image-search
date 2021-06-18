@@ -2,6 +2,7 @@ FROM python:3.9
 
 # tailing slash is mandatory
 ENV TMP_DIR=/tmp/image-service/
+ENV TORCH_HOME=${TMP_DIR}
 
 RUN mkdir ${TMP_DIR} -p && \
     chmod 0777 ${TMP_DIR} -R
