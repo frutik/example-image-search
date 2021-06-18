@@ -4,3 +4,7 @@ pylint
 boto3
 invoke
 img2vec_pytorch
+annoy
+python-multipart
+httpx
+Pillow==8.1.2

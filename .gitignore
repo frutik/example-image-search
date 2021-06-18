@@ -3,6 +3,7 @@
 .idea/
 .git/
 .gradle/
+venv/
 .history
 tmp/*
 *.pyc
