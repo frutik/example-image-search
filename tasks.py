@@ -37,10 +37,16 @@ def build_vectors(c, docs=False, bytecode=False, extra=''):
     s3i = S3Images(aws_access_key_id=aws_access_key_id,
                    aws_secret_access_key=aws_secret_access_key,
                    region_name=aws_region)
-    for line in open(TMP_PATH + raw, 'r'):
+    vectors_file = open(TMP_PATH + 'vectors.ndjson', 'a')
+    raw_data = open(TMP_PATH + raw, 'r')
+    for line in raw_data:
         data = json.loads(line)
         img = s3i.from_s3(aws_s3_bucket, data['images'].replace('/products/', 'products/'))
         img2vec = Img2Vec(cuda=False)
-        vec = img2vec.get_vec(img, tensor=True)
-        iv = [i[0][0] for i in vec.tolist()[0]]
-        print(iv)
+        try:
+            vec = img2vec.get_vec(img, tensor=True)
+            iv = [i[0][0] for i in vec.tolist()[0]]
+            vectors_file.write(json.dumps(iv))
+        except:
+            pass
+    vectors_file.close()
