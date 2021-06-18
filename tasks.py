@@ -3,6 +3,7 @@ import json
 
 from invoke import task
 from img2vec_pytorch import Img2Vec
+from tqdm.auto import tqdm
 
 from image_search.utils import ensure_required
 from aws.utils import download_from_s3
@@ -39,7 +40,7 @@ def build_vectors(c, docs=False, bytecode=False, extra=''):
                    region_name=aws_region)
     vectors_file = open(TMP_PATH + 'vectors.ndjson', 'a')
     raw_data = open(TMP_PATH + raw, 'r')
-    for line in raw_data:
+    for line in tqdm(raw_data):
         data = json.loads(line)
         img = s3i.from_s3(aws_s3_bucket, data['images'].replace('/products/', 'products/'))
         img2vec = Img2Vec(cuda=False)
