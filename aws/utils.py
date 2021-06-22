@@ -2,7 +2,7 @@ import sys
 import boto3
 
 
-def upload_to_s3(credentials, region, bucket, to_filename, content, mime_type):
+def put_to_s3(credentials, region, bucket, to_filename, content, mime_type):
     s3 = boto3.resource(
         's3',
         region_name=region,
@@ -12,6 +12,15 @@ def upload_to_s3(credentials, region, bucket, to_filename, content, mime_type):
         Body=content,
         ACL='public-read',
         ContentType=mime_type)
+
+
+def upload_to_s3(credentials, region, bucket, to_filename, from_filename):
+    s3 = boto3.client(
+        's3',
+        aws_access_key_id=credentials[0],
+        aws_secret_access_key=credentials[1],
+        region_name=region)
+    s3.upload_file(from_filename, bucket, to_filename)
 
 
 def download_from_s3(credentials, region, bucket, to_filename, from_filename):
