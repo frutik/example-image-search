@@ -6,7 +6,7 @@ from img2vec_pytorch import Img2Vec
 from tqdm.auto import tqdm
 
 from image_search.utils import ensure_required
-from aws.utils import download_from_s3
+from aws.utils import download_from_s3, upload_to_s3
 from aws.pil_s3 import S3Images
 
 
@@ -26,28 +26,38 @@ def ensure_required_files(c, docs=False, bytecode=False, extra=''):
         aws_s3_bucket)
 
 
+def build_vector(remote_file):
+    try:
+        s3i = S3Images(aws_access_key_id=aws_access_key_id,
+                       aws_secret_access_key=aws_secret_access_key,
+                       region_name=aws_region)
+        img = s3i.from_s3(aws_s3_bucket, remote_file)
+        img2vec = Img2Vec(cuda=False)
+        vec = img2vec.get_vec(img, tensor=True)
+        return [i[0][0] for i in vec.tolist()[0]]
+    except:
+        pass
+
 @task
 def build_vectors(c, docs=False, bytecode=False, extra=''):
-    raw = 'images2categories-filtered.json'
+    vectors_filename = '/mnt/data/vectors.ndjson'
+    if os.path.isfile(vectors_filename):
+        raise RuntimeError('Vectors file already exists. Please remove it first.')
+    raw = 'images2categories-train.json'
     download_from_s3(
         (aws_access_key_id, aws_secret_access_key),
         aws_region,
         aws_s3_bucket,
         TMP_PATH + raw,
         'annoy/' + raw)
-    s3i = S3Images(aws_access_key_id=aws_access_key_id,
-                   aws_secret_access_key=aws_secret_access_key,
-                   region_name=aws_region)
-    vectors_file = open(TMP_PATH + 'vectors.ndjson', 'a')
-    raw_data = open(TMP_PATH + raw, 'r')
-    for line in tqdm(raw_data):
+    raw_data = open(TMP_PATH + raw, 'r').readlines()
+    vectors_file = open(vectors_filename, 'a')
+    for line in tqdm(raw_data, total=len(raw_data)):
         data = json.loads(line)
-        img = s3i.from_s3(aws_s3_bucket, data['images'].replace('/products/', 'products/'))
-        img2vec = Img2Vec(cuda=False)
-        try:
-            vec = img2vec.get_vec(img, tensor=True)
-            iv = [i[0][0] for i in vec.tolist()[0]]
-            vectors_file.write(json.dumps(iv))
-        except:
-            pass
+        if 'vector' not in data:
+            vector = build_vector(data['images'].replace('/products/', 'products/'))
+            if vector:
+                data['vector'] = vector
+        vectors_file.write(f'{json.dumps(data)}\n')
+        vectors_file.flush()
     vectors_file.close()
