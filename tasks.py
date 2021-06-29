@@ -63,6 +63,18 @@ def build_vectors(c, file, help={'file': "File to process. Full path."}):
     vectors_file.close()
 
 
+@task
+def build_index(c, source_file, help={'file': "File to process. Full path."}):
+    annoy = AnnoyIndex(512, 'angular')
+    annoy.on_disk_build(source_file + '.ann')
+    vectors_data = open(source_file, 'r')
+    for line in tqdm(vectors_data, total=1163240):
+        data = json.loads(line)
+        if 'vector' in data:
+            annoy.add_item(data['id'], data['vector'])
+    annoy.build(10, -1)
+
+
 def get_idx(path):
     data = open(path, 'r')
     hash = {}
@@ -78,7 +90,7 @@ def build_evaluation(c, evaluation_file, index_file, source_file, help={'file': 
     annoy.load(index_file)
     sources = get_idx(source_file)
     evaluation_data = open(evaluation_file, 'r').readlines()
-    for line in tqdm(raw_data, total=len(evaluation_data)):
+    for line in tqdm(evaluation_data, total=len(evaluation_data)):
         data = json.loads(line)
         if 'vector' not in data:
             similar = annoy.get_nns_by_vector(data['vector'], 5)
