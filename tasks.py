@@ -18,6 +18,9 @@ aws_secret_access_key = os.getenv('AWS_KEY_SECRET')
 aws_region = os.getenv('AWS_REGION')
 aws_s3_bucket = os.getenv('AWS_S3_BUCKET')
 
+NUM_OF_DIMENSIONS = 512
+SIMILARITY_METRIC = 'angular'
+
 
 @task
 def ensure_required_files(c, docs=False, bytecode=False, extra=''):
@@ -65,7 +68,7 @@ def build_vectors(c, file, help={'file': "File to process. Full path."}):
 
 @task
 def build_index(c, source_file, help={'file': "File to process. Full path."}):
-    annoy = AnnoyIndex(512, 'angular')
+    annoy = AnnoyIndex(NUM_OF_DIMENSIONS, SIMILARITY_METRIC)
     annoy.on_disk_build(source_file + '.ann')
     vectors_data = open(source_file, 'r')
     for line in tqdm(vectors_data, total=1163240):
@@ -85,9 +88,9 @@ def get_idx(path):
 
 
 @task
-def build_evaluation(c, evaluation_file, index_file, source_file, help={'file': "File to process. Full path."}):
-    annoy = AnnoyIndex(512, 'angular')
-    annoy.load(index_file)
+def build_evaluation(c, evaluation_file, source_file, help={'file': "File to process. Full path."}):
+    annoy = AnnoyIndex(NUM_OF_DIMENSIONS, SIMILARITY_METRIC)
+    annoy.load(source_file + '.ann')
     sources = get_idx(source_file)
     evaluation_data = open(evaluation_file, 'r').readlines()
     for line in tqdm(evaluation_data, total=len(evaluation_data)):
